@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<head>
+    <title>Todo List App</title>
+    <link rel="stylesheet" href="/css/style.css">
+</heads>
+<body>
+    <div class="todo-container">
+        <h1>Todo List App</h1>
+
+        <!-- filter form -->
+         <form action="/" class="filter-form" method="get">
+            <select name="priority" onchange="this.form.submit()" id="">
+                <option value="All" <%= filter === 'All' ? 'selected' : '' %>>All</option>
+                <option value="Important" <%= filter === 'Important' ? 'selected' : '' %>>Important</option>
+                <option value="Medium" <%= filter === 'Medium' ? 'selected' : '' %>>Medium</option>
+                <option value="Low" <%= filter === 'Low' ? 'selected' : '' %>>Low</option>
+            </select>
+         </form>
+         
+         <!-- adding task -->
+          <form action="/add" class="add-form" method="post">
+            <input type="text" name="text" placeholder="Add your new todo">
+            <select name="priority" id="">
+                <option value="Important">Important</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+            <button type="submit" class="add-btn">+</button>
+          </form>
+          
+          <div class="task-list">
+            <% if (tasks.length === 0) { %>
+             <p class="empty">No tasks found</p>
+            <%} else { %>
+                <% tasks.forEach(task => { %>
+                <div class="task-item">
+                    <!-- Toggle complete -->
+                     <form action="/toggle/<%= task.id %>" method="post" style="display:inline;" >
+                        <button type="submit" class="toggle-btn"> <%= task.completed ? "✓" : "Not Done" %></button>
+                     </form>
+                     
+                     <!-- editable text -->
+                      <form action="/edit/<%= task.id %>?_method=PUT" method="post" style="display:inline;">
+                        <input type="text" name="text" value="<%= task.text %>" class="<%= task.completed ? 'done' : '' %>">
+                        <button type="submit" class="edit-btn">Edit</button>
+                      </form>
+
+                      <span class="badge <%= task.priority.toLowerCase() %>"> <%= task.priority %></span>
+
+                      <form action="/delete/<%= task.id %>?_method=DELETE" method="post" style="display:inline;">
+                        <button type="submit" class="delete-btn">Del</button>
+                      </form>
+                </div>
+               <% }) %>
+            <% } %>
+          </div>
+
+          <% if (tasks.length > 0) { %>
+            <div class="footer">
+                <span>You have <%= tasks.length %> pending tasks</span>
+                <form action="/clear" method="post">
+                    <button type="submit" class="clear-btn">Clear All</button>
+                </form>
+            </div>
+         <% } %>
+    </div>
+</body>
+</html>
